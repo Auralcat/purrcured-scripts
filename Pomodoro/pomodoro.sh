@@ -41,10 +41,9 @@ $notify_end "Pomodoro finished!" "Opening pomodorocount..."
 
 # Plays a sound clip for when the user doesn't see the notification.
 # Requires mpv installed!
-mpv "sound/Jetsons DoorBell Ringtone and Alert-CY4bz7_qFgc.mp3"
+mpv "sound/<clip_goes_here>"
 
 sleep 5s
-
 
 pomocount
 
