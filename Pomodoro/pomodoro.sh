@@ -24,10 +24,6 @@ $notify_start "Begin!" "Starting pomodoro..."
 echo "Press CTRL+C to stop counting."
 echo -e
 
-# Plays a sound clip for when the user doesn't see the notification.
-# Requires mpv installed!
-mpv sound/Jetsons DoorBell Ringtone and Alert-CY4bz7_qFgc.mp3
-
 # Getting ready to catch <C-c> input
 trap pomostop SIGINT
 
@@ -42,7 +38,13 @@ tmux rename-window "Done! ^-^"
 
 # Displays end message as a popup notification in the desktop
 $notify_end "Pomodoro finished!" "Opening pomodorocount..."
+
+# Plays a sound clip for when the user doesn't see the notification.
+# Requires mpv installed!
+mpv "sound/Jetsons DoorBell Ringtone and Alert-CY4bz7_qFgc.mp3"
+
 sleep 5s
+
 
 pomocount
 

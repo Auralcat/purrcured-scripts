@@ -13,12 +13,12 @@ import datetime
 now = datetime.datetime.now()
 current_day = now.strftime("%d/%m/%Y")
 
-# Checking where the database is:
-pwd = os.getcwd()
-print("Checking for database in {}".format(pwd))
+# Fixing database path
+home = os.environ.get("HOME")
+database_path = os.path.join(home, "Python Scripts", "total-pomodoro-count")
 
 # Tracking the total amount of pomodoros:
-total_pomodoros = shelve.open('total-pomodoro-count')
+total_pomodoros = shelve.open(database_path)
 
 # If there's no instance of the current day in the shelf file, we'll create one
 if current_day not in total_pomodoros:
@@ -29,7 +29,7 @@ print("Pomodoros completed today: " + str(current_pomocount))
 mins, secs = 0, 0
 
 # Here's where you set the amount of minutes you want it to count:
-while mins != 1:
+while mins != 25:
     secs += 1
     if secs == 60:
         mins += 1
