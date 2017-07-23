@@ -41,7 +41,7 @@ $notify_end "Pomodoro finished!" "Opening pomodorocount..."
 
 # Plays a sound clip for when the user doesn't see the notification.
 # Requires mpv installed!
-mpv "sound/<clip_goes_here>"
+mpv "sound/SchoolBell.ogg"
 
 sleep 5s
 
