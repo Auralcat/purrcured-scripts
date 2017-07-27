@@ -4,6 +4,7 @@ import sys
 import datetime
 import shelve
 import os
+import time
 
 class PomodoroModel():
     """The Pomodoro object holds the data about the completed pomodoros and the
@@ -47,12 +48,13 @@ class PomodoroController():
 
         # Tracking the total amount of pomodoros
         print("Opening shelf in %s" % self.model.db_path)
-        with shelve.open(self.model.db_path, 'c') as dbfile:
-            # If there's no instance of the current day in the shelf file,
-            # we'll create one
-            if current_day not in total_pomodoros:
-                dbfile[current_day] = 0
-            current_pomocount = total_pomodoros[current_day]
+        dbfile = shelve.open(self.model.db_path)
+        # If there's no instance of the current day in the shelf file,
+        # we'll create one
+        if current_day not in self.model.total_pomodoros:
+            dbfile[current_day] = 0
+        current_pomocount = self.model.total_pomodoros[current_day]
+        dbfile.close()
 
         print("Pomodoros completed today: " + str(current_pomocount))
 
@@ -68,7 +70,6 @@ class PomodoroController():
                 self.model.mins += 1
                 self.model.secs = 0
             time.sleep(1)
-        self.stop()
 
     def stop(self, msg="Pomodoro finished!"):
         """Adds a complete pomodoro to the count and opens
@@ -77,14 +78,26 @@ class PomodoroController():
         self.model.total_pomodoros += 1
         self.reset()
 
-    def reset(self, msg="Pomodoro interrupted."):
+    def reset(self):
         """Returns the model's mins and secs value to 0"""
         self.model.mins = 0
         self.model.secs = 0
 
-    def interrupt(self):
+    def interrupt(self, msg="Pomodoro has been interrupted."):
         """Stops the pomodoro and returns to original state"""
+        print('\r' + msg)
+        self.reset()
 
+    def lifecycle(self):
+        """Standardizes a pomodoro lifecycle."""
+        try:
+            self.start()
+        except KeyboardInterrupt:
+            self.interrupt()
+        except:
+            print("Uh-oh! An error has occurred!")
+
+        self.stop()
 
 class PomodoroView():
     """Holds the methods to view the data inside PomodoroModel instances."""
@@ -101,7 +114,7 @@ class PomodoroView():
 def test():
     p = PomodoroModel(1)
     c = PomodoroController(p)
-    c.start()
+    c.lifecycle()
 
 test()
 
