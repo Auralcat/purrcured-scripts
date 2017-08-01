@@ -1,4 +1,5 @@
 # Pomodoro
 
-Pomodoro timer for the command line (and tmux to some extent, adapt to
-your needs as you see fit).
+Pomodoro timer modules written in Python. The goal is to be as extensible
+and integratable as possible. Choose where you want to use it and write
+your own script using the modules in the *core* folder.
