@@ -38,6 +38,9 @@ while mins != 25:
                                   str(secs).zfill(2))
     sys.stdout.write(display_time+'\r')
     sys.stdout.flush()
+
+    # Displaying time in tmux window title as well
+    os.system("tmux rename-window '" + display_time + "'")
     time.sleep(1)
 
 print(display_time)

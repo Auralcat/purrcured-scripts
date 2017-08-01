@@ -13,6 +13,7 @@ pomocount()
 pomostop()
 {
     echo -e "\nPomodoro stopped before completion."
+    tmux rename-window "Pomodoro"
     exit 1
 }
 
@@ -41,7 +42,7 @@ $notify_end "Pomodoro finished!" "Opening pomodorocount..."
 
 # Plays a sound clip for when the user doesn't see the notification.
 # Requires mpv installed!
-mpv "sound/SchoolBell.ogg"
+mpv "$HOME/purrcured-scripts/Pomodoro/sound/SchoolBell.ogg"
 
 sleep 5s
 
