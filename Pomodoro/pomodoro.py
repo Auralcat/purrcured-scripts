@@ -60,12 +60,14 @@ class PomodoroModel():
 
         return display_time
 
-    def get_pomocount_file(self):
+    def open_pomocount_file(self, count_file_path):
         """Returns the pomocount file if there is one."""
 
         # Fixing pomocount path
         home = os.environ.get("HOME")
-        return os.path.join(home, "pomodorocount2017")
+        editor = os.environ.get("EDITOR")
+        path = os.path.join(home, count_file_path)
+        os.system(" ".join([editor, path]))
 
 class PomodoroController():
     """Controls the model."""
@@ -129,6 +131,7 @@ class PomodoroController():
         self.model.total_pomodoros += 1
         self.model.update_db()
         self.stop()
+        self.model.open_pomocount_file("testpomocount")
 
 class PomodoroView():
     """Holds the methods to view the data inside PomodoroModel instances."""
@@ -148,4 +151,3 @@ def test():
     c.lifecycle()
 
 test()
-
