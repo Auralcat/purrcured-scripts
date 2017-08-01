@@ -1,10 +1,9 @@
-# TODO: Integrate the time module
+# The model holds the data for the programs. The idea here is to leave it as
+# open as possible for new programs to use it.
 
-import sys
 import datetime
 import shelve
 import os
-import time
 
 class PomodoroModel():
     """The Pomodoro object holds the data about the completed pomodoros and the
@@ -78,81 +77,6 @@ class PomodoroModel():
 
         # Call the editor
         os.system(" ".join([editor, path]))
-
-class PomodoroController():
-    """Controls the model."""
-
-    def __init__(self, model):
-        self.model = model
-
-    def start_timer(self, duration):
-        """Begins counting the time."""
-        view = PomodoroView(self.model)
-
-        while self.model.mins != duration:
-            view.time()
-            self.model.secs += 1
-            if self.model.secs == 60:
-                self.model.mins += 1
-                self.model.secs = 0
-            time.sleep(1)
-
-    def stop(self, msg="Pomodoro finished!"):
-        """Adds a complete pomodoro to the count and opens
-           the pomocount file."""
-        print(msg)
-        self.reset()
-
-    def reset(self):
-        """Returns the model's mins and secs value to 0"""
-        self.model.mins = 0
-        self.model.secs = 0
-
-    def interrupt(self, msg="Pomodoro has been interrupted."):
-        """Stops the pomodoro and returns to original state"""
-        print('\r' + msg)
-        self.reset()
-
-    def start_break(self, msg="Break time! Get some rest <3"):
-        """Sets a <break> duration timer so the user gets a rest"""
-        self.model.start_time(self.model.break_duration)
-        self.model.break_count += 1
-        self.stop()
-
-    def long_break(self, msg="Long break time! Maybe it's a good idea to do \
-                   some other activity, then resume this one!"):
-        """Sets a <long_break> duration timer"""
-        self.model.break_count = 0
-        self.model.start_time(self.model.long_break_duration)
-        self.stop()
-
-    def lifecycle(self, msg="Beginning pomodoro... focus!"):
-        """Standardizes a pomodoro lifecycle."""
-        current_pomocount = self.model.db_file[self.model.current_day]
-        print("Pomodoros completed today: " + str(current_pomocount))
-
-        print(msg)
-
-        try:
-            self.start_timer(self.model.duration)
-        except KeyboardInterrupt:
-            self.interrupt()
-
-        self.model.update_db()
-        self.stop()
-        self.model.open_pomocount_file("samplepomocount.txt")
-
-class PomodoroView():
-    """Holds the methods to view the data inside PomodoroModel instances."""
-
-    def __init__(self, model):
-        self.model = model
-
-    def time(self):
-        display_time = "{}:{}".format(str(self.model.mins).zfill(2),
-                                      str(self.model.secs).zfill(2))
-        sys.stdout.write(display_time + '\r')
-        sys.stdout.flush()
 
 def test():
     p = PomodoroModel("Python Scripts/test-pomodoro-count", 1)
