@@ -13,7 +13,7 @@ class PomodoroModel():
     total_pomodoros = 0
     break_count = 0
 
-    def __init__(self, duration=25, break_duration=5,
+    def __init__(self, db_path, duration=25, break_duration=5,
                  long_break_duration=30):
         """Sets the duration of a pomodoro session and initializes
            the variables"""
@@ -22,13 +22,36 @@ class PomodoroModel():
         self.long_break_duration = long_break_duration
         self.mins = 0
         self.secs = 0
-        self.db_path = self.get_db()
 
-    def get_db(self):
+        # Getting the current day:
+        now = datetime.datetime.now()
+        self.current_day = now.strftime("%d/%m/%Y")
+
+        self.db_file = self.get_db(db_path)
+
+    def get_db(self, db_path):
         """Passes the database object to be used with shelve."""
-        # Fixing database path
+        # Fixing database path.
+        # If it doesn't exist, it will be created.
         home = os.environ.get("HOME")
-        return os.path.join(home, "Python Scripts", "total-pomodoro-count")
+        if not os.path.exists(os.path.join(home, db_path)):
+            new_db = shelve.open(os.path.join(home, db_path))
+            new_db.close()
+
+        # Tracking the total amount of pomodoros
+        print("Opening shelf in %s" % db_path)
+        dbfile = shelve.open(os.path.join(home, db_path))
+
+        # If there's no instance of the current day in the shelf file,
+        # we'll create one
+        if self.current_day not in dbfile:
+            dbfile[self.current_day] = 0
+
+        return dbfile
+
+    def update_db(self):
+        """Updates the pomodoro count in the db"""
+        self.db_file[self.current_day] = self.total_pomodoros
 
     def get_time(self):
         """Returns a string with the elapsed pomodoro time."""
@@ -50,30 +73,10 @@ class PomodoroController():
     def __init__(self, model):
         self.model = model
 
-    def open_db(self):
-        """Opens the database from the model"""
-
-        # Getting the current day:
-        now = datetime.datetime.now()
-        current_day = now.strftime("%d/%m/%Y")
-
-        # Tracking the total amount of pomodoros
-        print("Opening shelf in %s" % self.model.db_path)
-        dbfile = shelve.open(self.model.db_path)
-        # If there's no instance of the current day in the shelf file,
-        # we'll create one
-        if current_day not in self.model.total_pomodoros:
-            dbfile[current_day] = 0
-        current_pomocount = self.model.total_pomodoros[current_day]
-        dbfile.close()
-
-        print("Pomodoros completed today: " + str(current_pomocount))
-
     def start_timer(self, duration):
         """Begins counting the time."""
-        self.open_db()
-        print(msg)
         view = PomodoroView(self.model)
+
         while self.model.mins != duration:
             view.time()
             self.model.secs += 1
@@ -98,32 +101,33 @@ class PomodoroController():
         print('\r' + msg)
         self.reset()
 
-    def break(self, msg="Break time! Get some rest <3"):
+    def start_break(self, msg="Break time! Get some rest <3"):
         """Sets a <break> duration timer so the user gets a rest"""
-        self.start_time(self.break_duration)
-        self.break_count += 1
+        self.model.start_time(self.model.break_duration)
+        self.model.break_count += 1
         self.stop()
 
-    def long_break(self, msg="Long break time! Maybe it's a good idea to do
-                   some other activity, then resume this one!")
+    def long_break(self, msg="Long break time! Maybe it's a good idea to do \
+                   some other activity, then resume this one!"):
         """Sets a <long_break> duration timer"""
-        self.break_count = 0
-        self.start_time(self.long_break_duration)
+        self.model.break_count = 0
+        self.model.start_time(self.model.long_break_duration)
         self.stop()
 
     def lifecycle(self, msg="Beginning pomodoro... focus!"):
         """Standardizes a pomodoro lifecycle."""
-        self.open_db()
+        current_pomocount = self.model.db_file[self.model.current_day]
+        print("Pomodoros completed today: " + str(current_pomocount))
+
         print(msg)
 
         try:
-            self.start_timer()
+            self.start_timer(self.model.duration)
         except KeyboardInterrupt:
             self.interrupt()
-        except:
-            print("Uh-oh! An error has occurred!")
 
         self.model.total_pomodoros += 1
+        self.model.update_db()
         self.stop()
 
 class PomodoroView():
@@ -139,7 +143,7 @@ class PomodoroView():
         sys.stdout.flush()
 
 def test():
-    p = PomodoroModel(1)
+    p = PomodoroModel("Python Scripts/test-pomodoro-count", 1)
     c = PomodoroController(p)
     c.lifecycle()
 
