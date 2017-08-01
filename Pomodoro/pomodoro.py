@@ -51,7 +51,7 @@ class PomodoroModel():
 
     def update_db(self):
         """Updates the pomodoro count in the db"""
-        self.db_file[self.current_day] = self.total_pomodoros
+        self.db_file[self.current_day] += 1
 
     def get_time(self):
         """Returns a string with the elapsed pomodoro time."""
@@ -67,6 +67,16 @@ class PomodoroModel():
         home = os.environ.get("HOME")
         editor = os.environ.get("EDITOR")
         path = os.path.join(home, count_file_path)
+
+        # If there's no file in the destination, we'll create a sample one
+        if not os.path.exists(path):
+            text = ("# This is a new pomocount file." +
+                    " You can track your work " +
+                    "like so:\n\n# (number) pomodoros - Task executed\n\n")
+            with open(path, 'w') as new_pomocount_file:
+                new_pomocount_file.write(text)
+
+        # Call the editor
         os.system(" ".join([editor, path]))
 
 class PomodoroController():
@@ -128,10 +138,9 @@ class PomodoroController():
         except KeyboardInterrupt:
             self.interrupt()
 
-        self.model.total_pomodoros += 1
         self.model.update_db()
         self.stop()
-        self.model.open_pomocount_file("testpomocount")
+        self.model.open_pomocount_file("samplepomocount.txt")
 
 class PomodoroView():
     """Holds the methods to view the data inside PomodoroModel instances."""
