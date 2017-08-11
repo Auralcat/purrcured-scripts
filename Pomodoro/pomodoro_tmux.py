@@ -3,12 +3,11 @@
 
 """Implementation of the core module for tmux"""
 
-import core
-import subprocess
+from core import pomoview, pomocontroller, pomomodel
+#import subprocess
 
 if __name__ == '__main__':
-        model = core.pomomodel.PomodoroModel("Python Scripts/test-pomodoro-count",
-            1)
-    controller = core.pomocontroller.PomodoroController(model)
+    model = pomomodel.PomodoroModel(1)
+    controller = pomocontroller.PomodoroController(model)
     controller.lifecycle()
     #subprocess.call("curl -L git.io/unix".split())

@@ -1,6 +1,17 @@
 # The model holds the data for the programs. The idea here is to leave it as
 # open as possible for new programs to use it.
 
+"""
+Module to hold the PomodoroModel class.
+It takes the following parameters for the __init__() method:
+- db_path -> Path to the pomodoro database (created by the shelf module)
+- duration (default: 25 minutes) -> Duration of a pomodoro session
+(excluding breaks and long breaks)
+- break_duration -> Duration of a break after a pomodoro has been completed
+- long_break_duration -> Duration of a long break, which is triggered by
+completing 3 pomodoros (will be adjustable soon)
+
+"""
 import datetime
 import shelve
 import os
