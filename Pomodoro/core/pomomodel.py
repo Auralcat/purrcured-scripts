@@ -77,10 +77,3 @@ class PomodoroModel():
 
         # Call the editor
         os.system(" ".join([editor, path]))
-
-def test():
-    p = PomodoroModel("Python Scripts/test-pomodoro-count", 1)
-    c = PomodoroController(p)
-    c.lifecycle()
-
-test()
