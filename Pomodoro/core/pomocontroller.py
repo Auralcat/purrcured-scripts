@@ -2,7 +2,7 @@
 # relaying the data to the view
 
 import time
-from pomoview import PomodoroView
+from .pomoview import PomodoroView
 
 class PomodoroController():
     """Controls the model."""
