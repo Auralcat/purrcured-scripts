@@ -15,6 +15,7 @@ completing 3 pomodoros (will be adjustable soon)
 import datetime
 import shelve
 import os
+import subprocess
 
 class PomodoroModel():
     """The Pomodoro object holds the data about the completed pomodoros and the
@@ -22,6 +23,7 @@ class PomodoroModel():
 
     total_pomodoros = 0
     break_count = 0
+    home = os.environ.get("HOME")
 
     def __init__(self, db_path, duration=25, break_duration=5,
                  long_break_duration=30):
@@ -43,15 +45,14 @@ class PomodoroModel():
         """Passes the database object to be used with shelve."""
         # Fixing database path.
         # If it doesn't exist, it will be created.
-        home = os.environ.get("HOME")
-        if not os.path.exists(os.path.join(home, db_path)):
-            print("Creating database in %s" % (os.path.join(home, db_path)))
-            new_db = shelve.open(os.path.join(home, db_path))
+        if not os.path.exists(os.path.join(self.home, db_path)):
+            print("Creating database in %s" % (os.path.join(self.home, db_path)))
+            new_db = shelve.open(os.path.join(self.home, db_path))
             new_db.close()
 
         # Tracking the total amount of pomodoros
         print("Opening shelf in %s" % db_path)
-        dbfile = shelve.open(os.path.join(home, db_path))
+        dbfile = shelve.open(os.path.join(self.home, db_path))
 
         # If there's no instance of the current day in the shelf file,
         # we'll create one
@@ -75,9 +76,8 @@ class PomodoroModel():
         """Returns the pomocount file if there is one."""
 
         # Fixing pomocount path
-        home = os.environ.get("HOME")
         editor = os.environ.get("EDITOR")
-        path = os.path.join(home, count_file_path)
+        path = os.path.join(self.home, count_file_path)
 
         # If there's no file in the destination, we'll create a sample one
         if not os.path.exists(path):
@@ -88,4 +88,5 @@ class PomodoroModel():
                 new_pomocount_file.write(text)
 
         # Call the editor
-        os.system(" ".join([editor, path]))
+        subprocess.call([editor, path])
+
