@@ -8,13 +8,6 @@ class PomodoroView():
         self.model = model
         self.print_func = print_func
 
-    def time(self):
-        """Returns a string containing the current time in the pomodoro"""
-        display_time = "{}:{}".format(str(self.model.mins).zfill(2),
-                                      str(self.model.secs).zfill(2))
-
-        return display_time
-
-    def display_time(self):
+    def display_time(self, elapsed_time):
         """Shows the time using the function received in __init__"""
-        self.print_func(self.time())
+        self.print_func(elapsed_time)

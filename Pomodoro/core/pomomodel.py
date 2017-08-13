@@ -16,6 +16,7 @@ import datetime
 import shelve
 import os
 import subprocess
+from collections import OrderedDict
 
 class PomodoroModel():
     """The Pomodoro object holds the data about the completed pomodoros and the
@@ -34,7 +35,7 @@ class PomodoroModel():
         self.long_break_duration = long_break_duration
         self.mins = 0
         self.secs = 0
-
+        self.completed_tasks = OrderedDict()
         # Getting the current day:
         now = datetime.datetime.now()
         self.current_day = now.strftime("%d/%m/%Y")
@@ -72,14 +73,14 @@ class PomodoroModel():
 
         return display_time
 
-    def open_pomocount_file(self, count_file_path):
-        """Returns the pomocount file if there is one."""
+    def get_pomocount_file(self, count_file_path):
+        """Returns the path to the pomocount file.
+           If the file doesn't exist, it will be created."""
 
         # Fixing pomocount path
         editor = os.environ.get("EDITOR")
         path = os.path.join(self.home, count_file_path)
 
-        # If there's no file in the destination, we'll create a sample one
         if not os.path.exists(path):
             text = ("# This is a new pomocount file." +
                     " You can track your work " +

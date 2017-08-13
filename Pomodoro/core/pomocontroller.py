@@ -15,7 +15,7 @@ class PomodoroController():
         """Begins counting the time."""
 
         while self.model.mins != duration:
-            self.view.display_time()
+            self.view.display_time(self.model.get_time())
             self.model.secs += 1
             if self.model.secs == 60:
                 self.model.mins += 1
@@ -76,3 +76,9 @@ class PomodoroController():
                 self.interrupt()
                 break
 
+    def log_pomodoros(self):
+        """Writes the task and pomodoros done into the log file"""
+
+        # With this we'll need to get a generic input function
+        task = input("Task completed: ")
+        self.model.completed_tasks[task] = self.model.pomodoros
