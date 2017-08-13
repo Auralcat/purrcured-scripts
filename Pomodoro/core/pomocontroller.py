@@ -74,5 +74,5 @@ class PomodoroController():
 
             except KeyboardInterrupt:
                 self.interrupt()
-                interrupted = True
+                break
 
