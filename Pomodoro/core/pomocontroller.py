@@ -22,7 +22,7 @@ class PomodoroController():
                 self.model.secs = 0
             time.sleep(1)
 
-    def stop(self, msg="Pomodoro finished!"):
+    def stop(self, msg="Pomodoro finished!\n"):
         """Adds a complete pomodoro to the count and updates
            the pomocount file."""
         print(msg)
@@ -35,12 +35,12 @@ class PomodoroController():
         self.model.mins = 0
         self.model.secs = 0
 
-    def interrupt(self, msg="Pomodoro has been interrupted."):
+    def interrupt(self, msg="Pomodoro has been interrupted.\n"):
         """Stops the pomodoro and returns to original state"""
         self.view.display(msg)
         self.reset()
 
-    def start_break(self, msg="Break time! Get some rest <3"):
+    def start_break(self, msg="Break time! Get some rest <3\n"):
         """Sets a <break> duration timer so the user gets a rest"""
         self.view.display(msg)
         self.start_timer(self.model.break_duration)
@@ -48,14 +48,14 @@ class PomodoroController():
         self.reset()
 
     def long_break(self, msg="Long break time! Maybe it's a good idea to do \
-                   some other activity, then resume this one!"):
+                   some other activity, then resume this one!\n"):
         """Sets a <long_break> duration timer"""
         self.view.display(msg)
         self.model.break_count = 0
         self.start_timer(self.model.long_break_duration)
         self.reset()
 
-    def lifecycle(self, msg="Beginning pomodoro... focus!"):
+    def lifecycle(self, msg="Beginning pomodoro... focus!\n"):
         """Standardizes a pomodoro lifecycle."""
         current_pomocount = self.model.db_file[self.model.current_day]
         prompt = "Pomodoros completed today: "
