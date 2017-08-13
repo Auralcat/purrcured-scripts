@@ -2,20 +2,20 @@
 # relaying the data to the view
 
 import time
-from .pomoview import PomodoroView
 
 class PomodoroController():
     """Controls the model."""
 
-    def __init__(self, model):
+    def __init__(self, model, view):
+        """Parameters: PomodoroModel object and a PomodoroView object"""
         self.model = model
+        self.view = view
 
     def start_timer(self, duration):
         """Begins counting the time."""
-        view = PomodoroView(self.model)
 
         while self.model.mins != duration:
-            view.time()
+            self.view.display_time()
             self.model.secs += 1
             if self.model.secs == 60:
                 self.model.mins += 1

@@ -45,6 +45,7 @@ class PomodoroModel():
         # If it doesn't exist, it will be created.
         home = os.environ.get("HOME")
         if not os.path.exists(os.path.join(home, db_path)):
+            print("Creating database in %s" % (os.path.join(home, db_path)))
             new_db = shelve.open(os.path.join(home, db_path))
             new_db.close()
 
