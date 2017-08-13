@@ -8,6 +8,6 @@ class PomodoroView():
         self.model = model
         self.print_func = print_func
 
-    def display_time(self, elapsed_time):
-        """Shows the time using the function received in __init__"""
-        self.print_func(elapsed_time)
+    def display(self, text):
+        """Shows the message using the function received in __init__"""
+        self.print_func(text)

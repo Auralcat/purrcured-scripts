@@ -15,7 +15,7 @@ class PomodoroController():
         """Begins counting the time."""
 
         while self.model.mins != duration:
-            self.view.display_time(self.model.get_time())
+            self.view.display(self.model.get_time())
             self.model.secs += 1
             if self.model.secs == 60:
                 self.model.mins += 1
@@ -23,11 +23,11 @@ class PomodoroController():
             time.sleep(1)
 
     def stop(self, msg="Pomodoro finished!"):
-        """Adds a complete pomodoro to the count and opens
+        """Adds a complete pomodoro to the count and updates
            the pomocount file."""
         print(msg)
         self.model.update_db()
-        self.model.open_pomocount_file("samplepomocount.txt")
+        self.log_pomodoros()
         self.reset()
 
     def reset(self):
@@ -37,11 +37,12 @@ class PomodoroController():
 
     def interrupt(self, msg="Pomodoro has been interrupted."):
         """Stops the pomodoro and returns to original state"""
-        print('\r' + msg)
+        self.view.display(msg)
         self.reset()
 
     def start_break(self, msg="Break time! Get some rest <3"):
         """Sets a <break> duration timer so the user gets a rest"""
+        self.view.display(msg)
         self.start_timer(self.model.break_duration)
         self.model.break_count += 1
         self.reset()
@@ -49,6 +50,7 @@ class PomodoroController():
     def long_break(self, msg="Long break time! Maybe it's a good idea to do \
                    some other activity, then resume this one!"):
         """Sets a <long_break> duration timer"""
+        self.view.display(msg)
         self.model.break_count = 0
         self.start_timer(self.model.long_break_duration)
         self.reset()
@@ -56,16 +58,16 @@ class PomodoroController():
     def lifecycle(self, msg="Beginning pomodoro... focus!"):
         """Standardizes a pomodoro lifecycle."""
         current_pomocount = self.model.db_file[self.model.current_day]
-        print("Pomodoros completed today: " + str(current_pomocount))
+        prompt = "Pomodoros completed today: "
+        self.view.display(prompt + str(current_pomocount))
+        self.view.display(msg)
 
-        print(msg)
         interrupted = False
         while not interrupted:
             try:
                 self.start_timer(self.model.duration)
                 self.model.update_db()
-                self.model.open_pomocount_file("samplepomocount.txt")
-
+                self.stop()
                 # Implementing breaks
                 if self.model.break_count < 3:
                     self.start_break()
@@ -79,6 +81,22 @@ class PomodoroController():
     def log_pomodoros(self):
         """Writes the task and pomodoros done into the log file"""
 
+        path = self.model.get_pomocount_file("samplepomocount.txt")
+        self.view.display("Opening pomocount file in %s" % path)
+        log_format = "%d pomodoros - %s\n"
+
         # With this we'll need to get a generic input function
+        # BTW, the implementation of a pre-defined input depends on the
+        # platform you're working in
+        self.view.display("Last completed task: %s" % self.model.previous_task)
         task = input("Task completed: ")
-        self.model.completed_tasks[task] = self.model.pomodoros
+        if task not in self.model.completed_tasks:
+            self.model.completed_tasks[task] = 1
+        else:
+            self.model.completed_tasks[task] += 1
+
+        with open(path, 'w') as log_file:
+            for task, pomos in self.model.completed_tasks.items():
+                self.view.display("Logging task: %s" % task)
+                log_file.write(log_format % (pomos, task))
+
