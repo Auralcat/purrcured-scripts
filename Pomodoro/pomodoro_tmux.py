@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- encoding: utf-8 -*-
+# -*- encode: utf-8 -*-
 
 """Implementation of the core module for tmux"""
 
@@ -14,6 +14,17 @@ def print_func(msg):
     sys.stdout.write(msg + '\r')
     sys.stdout.flush()
 
+# You can define the input function from outside the core module.
+# In this case, we'll get the variables we need from sys.argv.
+def pass_vars(args):
+    """Sample input function"""
+    # You NEED to cast all the input vars to ints!
+    size = len(args)
+    duration, break_dur, long_break_dur = [int(args[i]) for i in range(1, size)]
+    print("Duration: %s\n Break duration: %s\nLong Break Duration: %s" %
+            (duration, break_dur, long_break_dur))
+    return duration, break_dur, long_break_dur
+
 def change_tmux_window_title(text):
     """Changes the title of the window to the desired text"""
     # The idea here is to show the time through the window title
@@ -24,7 +35,9 @@ def change_tmux_window_title(text):
 if __name__ == '__main__':
     # Save current window title
     db_path = os.path.join(os.environ.get("HOME"), "test.pomodb")
-    model = pomomodel.PomodoroModel(db_path)
+    duration, break_duration, long_break_duration = pass_vars(sys.argv)
+    model = pomomodel.PomodoroModel(db_path, duration, break_duration,
+            long_break_duration)
     view = pomoview.PomodoroView(model, change_tmux_window_title)
     controller = pomocontroller.PomodoroController(model, view)
 

@@ -14,7 +14,8 @@ class PomodoroController():
     def start_timer(self, duration):
         """Begins counting the time."""
 
-        while self.model.mins != duration:
+        print("Target time: %s minutes" % duration)
+        while self.model.mins < duration:
             self.view.display(self.model.get_time())
             self.model.secs += 1
             if self.model.secs == 60:
@@ -62,8 +63,9 @@ class PomodoroController():
         self.view.display(prompt + str(current_pomocount))
         self.view.display(msg)
 
-        interrupted = False
-        while not interrupted:
+        # To be finished into counting cycles later
+        done = False
+        while not done:
             try:
                 self.start_timer(self.model.duration)
                 self.model.update_db()
