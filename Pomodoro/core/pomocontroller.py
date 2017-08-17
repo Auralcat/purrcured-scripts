@@ -93,6 +93,7 @@ class PomodoroController():
         # platform you're working in
         self.view.display("Last completed task: %s" % self.model.previous_task)
         task = input("Task completed: ")
+        self.model.previous_task = task
         if task not in self.model.completed_tasks:
             self.model.completed_tasks[task] = 1
         else:
