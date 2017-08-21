@@ -1,6 +1,4 @@
-#!/usr/bin/python3
-# -*- encode: utf-8 -*-
-
+#!/usr/bin/python3 # -*- encode: utf-8 -*-
 """Implementation of the core module for tmux"""
 
 from core import *
@@ -44,12 +42,17 @@ def pass_vars(args):
 if __name__ == '__main__':
     # Save current window title
     db_path = os.path.join(os.environ.get("HOME"), "test.pomodb")
-    sanitized_args = [int(sys.argv[i]) for i in range(1, len(sys.argv))]
-    duration, break_duration, long_break_duration = sanitized_args
+    try:
+        sanitized_args = [int(sys.argv[i]) for i in range(1, len(sys.argv))]
+        duration, break_duration, long_break_duration = sanitized_args
+    except:
+        print("Something went wrong! Using default values...")
+        duration, break_duration, long_break_duration = (25, 5, 15)
+
     model = pomomodel.PomodoroModel(db_path, duration, break_duration,
             long_break_duration)
     view = pomoview.PomodoroView(model, print_func)
-    controller = pomocontroller.PomodoroController(model, view)
+    controller = pomocontroller.PomodoroController(input, model, view)
 
     # Wrapping the process: get current title, execute, back to normal
     get_title_cmd = "tmux display-message -p '#W'"

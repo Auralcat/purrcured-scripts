@@ -4,18 +4,19 @@
 import time
 
 class PomodoroController():
-    """Controls the model."""
+    """Controls the model. Needs an input function for receiving data."""
 
-    def __init__(self, model, view):
+    def __init__(self, input_func, model, view):
         """Parameters: PomodoroModel object and a PomodoroView object"""
         self.model = model
         self.view = view
+        self.input_func = input_func
 
     def start_timer(self, duration):
         """Begins counting the time."""
 
-        # Debug purposes
-        #print("Target time: %s minutes" % duration)
+        # Display the target time for the user
+        self.view.display("Target time: %s minutes" % duration)
         while self.model.mins < duration:
             self.view.display(self.model.get_time())
             self.model.secs += 1
@@ -92,14 +93,14 @@ class PomodoroController():
         # BTW, the implementation of a pre-defined input depends on the
         # platform you're working in
         self.view.display("Last completed task: %s" % self.model.previous_task)
-        task = input("Task completed: ")
+        task = self.input_func("Task completed: ")
         self.model.previous_task = task
         if task not in self.model.completed_tasks:
             self.model.completed_tasks[task] = 1
         else:
             self.model.completed_tasks[task] += 1
 
-        with open(path, 'w') as log_file:
+        with open(path, 'a') as log_file:
             for task, pomos in self.model.completed_tasks.items():
                 self.view.display("Logging task: %s" % task)
                 log_file.write(log_format % (pomos, task))
